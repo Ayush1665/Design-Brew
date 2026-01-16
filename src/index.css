@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light beige and charcoal palette */
+    --background: 40 33% 96%;
+    --foreground: 0 0% 12%;
+
+    --card: 40 30% 94%;
+    --card-foreground: 0 0% 12%;
+
+    --popover: 40 33% 96%;
+    --popover-foreground: 0 0% 12%;
+
+    --primary: 0 0% 12%;
+    --primary-foreground: 40 33% 96%;
+
+    --secondary: 40 20% 88%;
+    --secondary-foreground: 0 0% 15%;
+
+    --muted: 40 15% 90%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 30 25% 85%;
+    --accent-foreground: 0 0% 12%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 40 15% 85%;
+    --input: 40 15% 85%;
+    --ring: 0 0% 12%;
+
+    --radius: 0.5rem;
+
+    /* Custom Design Brew tokens */
+    --beige: 40 33% 96%;
+    --beige-dark: 40 20% 88%;
+    --charcoal: 0 0% 12%;
+    --charcoal-light: 0 0% 25%;
+    --cream: 45 40% 98%;
+    --warm-gray: 30 10% 60%;
+
+    /* Typography */
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+
+    /* Shadows */
+    --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.04);
+    --shadow-medium: 0 8px 40px rgba(0, 0, 0, 0.08);
+
+    /* Sidebar defaults */
+    --sidebar-background: 40 33% 96%;
+    --sidebar-foreground: 0 0% 12%;
+    --sidebar-primary: 0 0% 12%;
+    --sidebar-primary-foreground: 40 33% 96%;
+    --sidebar-accent: 40 20% 88%;
+    --sidebar-accent-foreground: 0 0% 12%;
+    --sidebar-border: 40 15% 85%;
+    --sidebar-ring: 0 0% 12%;
+  }
+
+  .dark {
+    --background: 0 0% 8%;
+    --foreground: 40 33% 96%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 40 33% 96%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 40 33% 96%;
+
+    --primary: 40 33% 96%;
+    --primary-foreground: 0 0% 8%;
+
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 40 30% 90%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 40 15% 65%;
+
+    --accent: 0 0% 18%;
+    --accent-foreground: 40 33% 96%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 40 33% 96%;
+
+    --beige: 0 0% 8%;
+    --beige-dark: 0 0% 12%;
+    --charcoal: 40 33% 96%;
+    --charcoal-light: 40 25% 80%;
+    --cream: 0 0% 10%;
+    --warm-gray: 30 5% 50%;
+
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 40 33% 96%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-beige {
+    background-color: hsl(var(--beige));
+  }
+
+  .bg-charcoal {
+    background-color: hsl(var(--charcoal));
+  }
+
+  .text-charcoal {
+    color: hsl(var(--charcoal));
+  }
+
+  .text-warm-gray {
+    color: hsl(var(--warm-gray));
+  }
+
+  .border-charcoal {
+    border-color: hsl(var(--charcoal));
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.6s ease-out forwards;
+}
+
+/* Stagger children animations */
+.stagger-children > * {
+  opacity: 0;
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* Video container styling */
+.video-overlay {
+  background: linear-gradient(
+    to bottom,
+    hsl(var(--beige) / 0.3) 0%,
+    hsl(var(--beige) / 0.6) 100%
+  );
+}
