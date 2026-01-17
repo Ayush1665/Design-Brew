@@ -19,7 +19,7 @@ const Footer = () => {
   const footerLinks = [
     {
       title: "Services",
-      links: ["Content Management", "SEO", "Meta Ads", "Web Development"],
+      links: ["Content Management", "SEO Optimization", "Meta Ads", "Web Development"],
     },
     {
       title: "Company",
