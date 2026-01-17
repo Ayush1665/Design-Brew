@@ -51,8 +51,12 @@ const HeroSection = () => {
           muted
           playsInline
           preload="auto"
-          className="w-full h-full object-cover"
-          poster="/fallback-hero.jpg"
+          className="w-full h-full object-cover 
+    brightness-60
+    contrast-150 
+    grayscale 
+    sepia-30 
+    saturate-50"
         >
           <source src={video} type="video/mp4" />
           Your browser does not support the video tag.

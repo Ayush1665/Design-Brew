@@ -42,9 +42,11 @@ const Footer = () => {
       <div className="container mx-auto px-6 lg:px-12 relative">
         
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16 text-center md:text-left">
+
           {/* Brand Column */}
-          <div className="lg:col-span-2">
+         <div className="lg:col-span-2 flex flex-col items-center md:items-start">
+
             <div className="flex items-center gap-3 mb-6">
              
 
@@ -53,12 +55,14 @@ const Footer = () => {
                 Design Brew
               </span>
             </div>
-            <p className="text-primary-foreground/60 leading-relaxed mb-8 max-w-sm text-lg">
+            <p className="text-primary-foreground/60 leading-relaxed mb-8 max-w-sm text-lg text-center md:text-left">
+
               One Stop Solution for all your Infinite Ideas. We craft exceptional 
               digital experiences that inspire and convert.
             </p>
             {/* Social Links */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center md:justify-start gap-3">
+
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
@@ -79,7 +83,8 @@ const Footer = () => {
               <h4 className="font-display text-primary-foreground font-semibold mb-6 text-lg">
                 {column.title}
               </h4>
-              <ul className="space-y-4">
+              <ul className="space-y-4 flex flex-col items-center md:items-start">
+
                 {column.links.map((link) => (
                   <li key={link}>
                     <a
