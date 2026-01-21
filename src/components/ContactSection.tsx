@@ -47,7 +47,7 @@ const ContactSection = () => {
 
     try {
       const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Server is taking too long. Please try again later.")), 10000)
+        setTimeout(() => reject(new Error("Server is taking too long. Please try again later.")), 30000)
       );
 
       const fetchPromise = fetch("https://design-server-7bap.onrender.com/api/contact", {
