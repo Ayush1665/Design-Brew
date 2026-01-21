@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, MapPin, Phone, Send } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle } from "lucide-react";
 
@@ -17,50 +17,94 @@ const ContactSection = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSending, setIsSending] = useState(false);
+  const [backendError, setBackendError] = useState(""); // new
 
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
 
-  if (validateForm()) {
-    // Start sending
+  // Constants for limits
+  const LIMITS = {
+    subject: 10,
+    message: 150
+  };
+
+  // Helper to count words accurately
+  const getWordCount = (text: string) => {
+    const trimmed = text.trim();
+    return trimmed === "" ? 0 : trimmed.split(/\s+/).length;
+  };
+
+  // Memoized counts for performance
+  const counts = useMemo(() => ({
+    subject: getWordCount(formData.subject),
+    message: getWordCount(formData.message)
+  }), [formData.subject, formData.message]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
     setIsSending(true);
 
-    // Simulate network delay
-    setTimeout(() => {
-      console.log("Form submitted:", formData);
+    try {
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Server is taking too long. Please try again later.")), 10000)
+      );
 
-      // Reset form
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setErrors({});
+      const fetchPromise = fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-      // Show success modal
-      setShowSuccessModal(true);
+      const res = await Promise.race([fetchPromise, timeout]);
+      const data = await (res as Response).json();
+
+      if (data.success) {
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        setErrors({});
+        setBackendError(""); // clear previous backend errors
+        setShowSuccessModal(true);
+      }
+    } catch (err: any) {
+      setBackendError(err.message || "Something went wrong. Please try again."); // show in form
+    } finally {
       setIsSending(false);
-    }, 2000); // 2 seconds loading
-  }
-};
+    }
+  };
 
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) newErrors.name = "Name is required";
+
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
-    if (!formData.message.trim()) newErrors.message = "Message is required";
-    
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = "Subject is required";
+    } else if (counts.subject > LIMITS.subject) {
+      newErrors.subject = `Subject is too long`;
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (counts.message > LIMITS.message) {
+      newErrors.message = `Message is too long`;
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[id]) {
       setErrors(prev => ({ ...prev, [id]: "" }));
@@ -72,11 +116,11 @@ const handleSubmit = (e: React.FormEvent) => {
   };
 
   const handleEmailClick = () => {
-  const subject = "Request regarding your service";
-  const body = "Hi, Design Brew";
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=info.designbrew@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  window.open(gmailUrl, "_blank"); // Opens Gmail in a new tab
-};
+    const subject = "Request regarding your service";
+    const body = "Hi, Design Brew";
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=info.designbrew@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(gmailUrl, "_blank"); // Opens Gmail in a new tab
+  };
 
 
   const handleLocationClick = () => {
@@ -109,12 +153,12 @@ const handleSubmit = (e: React.FormEvent) => {
                 <span className="text-charcoal/50">Something Great</span>
               </h2>
               <p className="text-lg text-warm-gray leading-relaxed mb-4">
-  Ready to elevate your brand? We'd love to hear about your project
-  and explore how we can help bring your vision to life.
-</p>
-<p className="text-lg text-warm-gray leading-relaxed mb-12">
-  Feel free to connect with us for any of your needs regarding our services.  Just push a text to us and we will get back to you immediately.
-</p>
+                Ready to elevate your brand? We'd love to hear about your project
+                and explore how we can help bring your vision to life.
+              </p>
+              <p className="text-lg text-warm-gray leading-relaxed mb-12">
+                Feel free to connect with us for any of your needs regarding our services.  Just push a text to us and we will get back to you immediately.
+              </p>
 
 
               {/* Contact Info */}
@@ -135,15 +179,15 @@ const handleSubmit = (e: React.FormEvent) => {
                     value: "info.designbrew@gmail.com",
                     onClick: handleEmailClick
                   },
-                  { 
-                    icon: Phone, 
-                    label: "Call us at", 
+                  {
+                    icon: Phone,
+                    label: "Call us at",
                     value: "+91 84273 95293",
                     onClick: handlePhoneClick
                   },
-                  { 
-                    icon: MapPin, 
-                    label: "Visit us at", 
+                  {
+                    icon: MapPin,
+                    label: "Visit us at",
                     value: "Amritsar, Punjab",
                     onClick: handleLocationClick
                   },
@@ -191,6 +235,12 @@ const handleSubmit = (e: React.FormEvent) => {
                     <h3 className="font-display text-2xl font-semibold text-charcoal">Send us a message</h3>
                   </div>
 
+                  {backendError && (
+                    <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm flex items-center gap-2">
+                      <span>⚠</span> {backendError}
+                    </div>
+                  )}
+
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid sm:grid-cols-2 gap-6">
                       <div className="space-y-2">
@@ -202,9 +252,8 @@ const handleSubmit = (e: React.FormEvent) => {
                           id="name"
                           value={formData.name}
                           onChange={handleInputChange}
-                          className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all placeholder:text-muted-foreground ${
-                            errors.name ? "border-red-500" : "border-border"
-                          }`}
+                          className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all placeholder:text-muted-foreground ${errors.name ? "border-red-500" : "border-border"
+                            }`}
                           placeholder="John Doe"
                         />
                         {errors.name && (
@@ -220,9 +269,8 @@ const handleSubmit = (e: React.FormEvent) => {
                           id="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all placeholder:text-muted-foreground ${
-                            errors.email ? "border-red-500" : "border-border"
-                          }`}
+                          className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all placeholder:text-muted-foreground ${errors.email ? "border-red-500" : "border-border"
+                            }`}
                           placeholder="john@example.com"
                         />
                         {errors.email && (
@@ -230,62 +278,82 @@ const handleSubmit = (e: React.FormEvent) => {
                         )}
                       </div>
                     </div>
+
+                    {/* ... Name and Email grid stays the same ... */}
+
+                    {/* Subject Field */}
                     <div className="space-y-2">
-                      <label htmlFor="subject" className="block text-sm font-semibold text-charcoal">
-                        Subject *
-                      </label>
+                      <div className="flex justify-between items-center">
+                        <label htmlFor="subject" className="block text-sm font-semibold text-charcoal">
+                          Subject *
+                        </label>
+                        {/* Word Counter for Subject */}
+
+                      </div>
                       <input
                         type="text"
                         id="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all placeholder:text-muted-foreground ${
-                          errors.subject ? "border-red-500" : "border-border"
-                        }`}
-                        placeholder="Project inquiry"
+                        className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all placeholder:text-muted-foreground ${counts.subject > LIMITS.subject || errors.subject ? "border-red-500 ring-1 ring-red-500" : "border-border"
+                          }`}
+                        placeholder="Subject"
                       />
-                      {errors.subject && (
-                        <p className="text-red-500 text-sm mt-1">{errors.subject}</p>
+                      {(errors.subject || counts.subject > LIMITS.subject) && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.subject ? errors.subject : "Subject is too long"}
+                        </p>
                       )}
+
                     </div>
+
+                    {/* Message Field */}
                     <div className="space-y-2">
-                      <label htmlFor="message" className="block text-sm font-semibold text-charcoal">
-                        Your Message *
-                      </label>
+                      <div className="flex justify-between items-center">
+                        <label htmlFor="message" className="block text-sm font-semibold text-charcoal">
+                          Your Message *
+                        </label>
+                      </div>
                       <textarea
                         id="message"
                         rows={5}
                         value={formData.message}
                         onChange={handleInputChange}
-                        className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all resize-none placeholder:text-muted-foreground ${
-                          errors.message ? "border-red-500" : "border-border"
-                        }`}
-                        placeholder="Tell us about your project..."
+                        className={`w-full px-5 py-4 bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-charcoal/20 focus:border-charcoal/30 transition-all resize-none placeholder:text-muted-foreground ${counts.message > LIMITS.message || errors.message ? "border-red-500 ring-1 ring-red-500" : "border-border"
+                          }`}
+                        placeholder="Write your message..."
                       />
-                      {errors.message && (
-                        <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+                      {(errors.message || counts.message > LIMITS.message) && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.message ? errors.message : "Message is too long"}
+                        </p>
                       )}
-                    </div>
-                    <Button
-  type="submit"
-  variant="hero"
-  className="w-full group shadow-lg shadow-charcoal/10 hover:shadow-xl"
-  size="xl"
-  disabled={isSending}
->
-  {isSending ? (
-    <span className="flex items-center justify-center gap-2">
-      Sending...
-      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-    </span>
-  ) : (
-    <>
-      Send Message
-      <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
-    </>
-  )}
-</Button>
 
+                    </div>
+
+                    <Button
+                      type="submit"
+                      variant="hero"
+                      className="w-full group shadow-lg shadow-charcoal/10 hover:shadow-xl"
+                      size="xl"
+                      disabled={
+                        isSending ||
+                        counts.subject > LIMITS.subject ||
+                        counts.message > LIMITS.message
+                      }
+                    >
+                      {isSending ? (
+                        <span className="flex items-center justify-center gap-2">
+                          Sending...
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        </span>
+                      ) : (
+                        <>
+                          Send Message
+                          <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" size={18} />
+                        </>
+                      )}
+                    </Button>
                   </form>
                 </div>
               </div>

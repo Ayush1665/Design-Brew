@@ -167,14 +167,15 @@ const AboutSection = () => {
               </h2>
 
               <p className="text-base md:text-lg text-warm-gray leading-relaxed mb-6">
-                At Design Brew, we're more than just designers — we're storytellers,
-                problem-solvers, and strategic partners.
-              </p>
+  At Design Brew, we're more than just designers — we're storytellers, problem-solvers, and strategic partners. 
+  We dive deep into your brand’s essence to craft experiences that resonate with your audience and drive meaningful engagement.
+</p>
 
               <p className="text-warm-gray leading-relaxed mb-8">
-                Great design should be purposeful, beautiful, and effective. We blend
-                creativity with strategy to deliver real results.
-              </p>
+  Great design should be purposeful, beautiful, and effective. We blend creativity with strategy to deliver real results. 
+  From branding and visual identity to digital experiences and marketing campaigns, our work ensures every interaction leaves a lasting impact. 
+  Our team thrives on innovation, attention to detail, and a relentless focus on helping your brand stand out in a crowded marketplace.
+</p>
 
               {/* Values */}
               <div className="grid sm:grid-cols-2 gap-3">
@@ -257,7 +258,7 @@ const AboutSection = () => {
                     loading="lazy"
                     width={256}
                     height={256}
-                    className="w-48 lg:w-56 h-52 lg:h-80 object-cover rounded-xl shadow-xl"
+                    className="w-48 lg:w-56 h-52 lg:h-80 object-cover rounded-xl "
                     {...motionConfigs.clientsImage}
                   />
                 </div>

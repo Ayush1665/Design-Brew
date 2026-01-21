@@ -51,12 +51,7 @@ const HeroSection = () => {
           muted
           playsInline
           preload="auto"
-          className="w-full h-full object-cover 
-    brightness-60
-    contrast-150 
-    grayscale 
-    sepia-30 
-    saturate-50"
+          className="w-full h-full object-cover"
         >
           <source src={video} type="video/mp4" />
           Your browser does not support the video tag.
@@ -73,9 +68,9 @@ const HeroSection = () => {
         )}
 
         {/* Enhanced Overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-beige/80 via-beige/60 to-beige/90" />
-        <div className="absolute inset-0 bg-gradient-to-r from-beige/30 via-transparent to-beige/30" />
-        <div className="absolute inset-0 bg-gradient-radial from-transparent via-beige/20 to-beige/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-beige/80 via-beige/60 to-beige/0" />
+        
+        
       </div>
 
       {/* Decorative Elements */}
@@ -95,7 +90,6 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 lg:px-12 py-24">
         <div className="max-w-4xl mx-auto text-center">
-
 
           {/* Main Headline */}
           <motion.h1
