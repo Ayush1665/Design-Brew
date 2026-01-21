@@ -68,9 +68,9 @@ const HeroSection = () => {
         )}
 
         {/* Enhanced Overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-beige/80 via-beige/60 to-beige/0" />
-        
-        
+        <div className="absolute inset-0 bg-gradient-to-b from-beige/80 via-beige/60 to-beige/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-beige/30 via-transparent to-beige/30" />
+        <div className="absolute inset-0 bg-gradient-radial from-transparent via-beige/20 to-beige/40" />
       </div>
 
       {/* Decorative Elements */}
