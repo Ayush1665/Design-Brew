@@ -50,7 +50,7 @@ const ContactSection = () => {
         setTimeout(() => reject(new Error("Server is taking too long. Please try again later.")), 10000)
       );
 
-      const fetchPromise = fetch("http://localhost:5000/api/contact", {
+      const fetchPromise = fetch("https://design-server-7bap.onrender.com/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
